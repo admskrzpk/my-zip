@@ -1,13 +1,23 @@
 import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should
-import org.scalatestplus.scalacheck.Checkers.check
+import org.scalatest.matchers._
+import org.scalatest.prop.TableDrivenPropertyChecks.whenever
+import org.scalatestplus.scalacheck.Checkers
+import org.scalatestplus.scalacheck.Checkers._
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 
-class myZipSpec extends AnyFlatSpec with should.Matchers {
+class myZipSpec extends AnyFlatSpec with should.Matchers with Checkers {
 
   import MyZip._
 
-  //check((a: Seq[Int], b: Seq[String]) => myzip(a, b).size == (a ::: b).size)
-  //check((a: Seq[Int], b: Seq[String]) => myZip(a, b).take(2) == List(a.head,b.head))
+  //check((a: Seq[Int], b: Seq[String]) => myZip(a, b).size == (a ++ b).size)
+
+  "myzip" should "return empty list if both input lists are empty." in {
+    forAll { (a: Seq[Int], b: Seq[String]) =>
+      whenever (a.nonEmpty && b.nonEmpty)  {
+        myZip(a, b).take(2) shouldBe Seq(a.head, b.head)
+      }
+    }
+  }
 
   "myzip" should "return empty Seq if both input Seq are empty" in {
     val s1 = Seq()
